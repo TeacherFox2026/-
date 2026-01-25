@@ -71,6 +71,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* 淡入動畫 */
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         /* 日期選擇器樣式優化 */
         input[type="date"] {
             position: relative;
@@ -100,7 +104,7 @@
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden relative">
 
-    <!-- 🐾 背景裝飾區 (新增多個漂浮肉球，顏色加深) -->
+    <!-- 🐾 背景裝飾區 (漂浮肉球，顏色加深) -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <!-- 左上綠色大肉球 -->
         <div class="absolute top-[12%] -left-8 text-neko-green/20 text-9xl rotate-[25deg] bg-paw" style="--r: 25deg;">
@@ -122,21 +126,40 @@
         <div class="absolute bottom-[10%] left-[-20px] text-neko-green/10 text-8xl rotate-[60deg] bg-paw" style="animation-delay: 0.5s; --r: 60deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
-        <!-- 新增：正上方淡橘色 -->
+        <!-- 正上方淡橘色 -->
         <div class="absolute top-[-20px] left-[40%] text-neko-orange/15 text-7xl rotate-[180deg] bg-paw" style="animation-delay: 3s; --r: 180deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
-        <!-- 新增：左中綠色 -->
+        <!-- 左中綠色 -->
         <div class="absolute top-[40%] left-[-10px] text-neko-green/15 text-5xl rotate-[10deg] bg-paw" style="animation-delay: 1.2s; --r: 10deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
-        <!-- 新增：右中橘色 -->
+        <!-- 右中橘色 -->
         <div class="absolute top-[50%] right-[10%] text-neko-orange/15 text-6xl -rotate-[20deg] bg-paw" style="animation-delay: 2.5s; --r: -20deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
-        <!-- 新增：左下角深一點的綠 -->
+        <!-- 左下角深一點的綠 -->
         <div class="absolute bottom-[5%] left-[20%] text-neko-green/20 text-4xl rotate-[45deg] bg-paw" style="animation-delay: 0.8s; --r: 45deg;">
             <i class="fa-solid fa-paw"></i>
+        </div>
+    </div>
+
+    <!-- PWA 安裝提示 (預設隱藏) -->
+    <div id="install-prompt" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end justify-center pb-10 fade-in backdrop-blur-sm">
+        <div class="bg-white w-[90%] max-w-md rounded-3xl p-6 shadow-2xl relative border-4 border-neko-green-light">
+            <button onclick="dismissInstall()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times text-xl"></i></button>
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-neko-green-light rounded-2xl flex items-center justify-center text-3xl text-neko-green">
+                    <i class="fa-solid fa-cat"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl text-neko-dark">安裝貓咪記帳本</h3>
+                    <p class="text-xs text-gray-500 mt-1">加到主畫面，記帳更方便！<br>還可以離線使用喔 🐾</p>
+                </div>
+            </div>
+            <button id="install-btn" class="w-full mt-5 bg-neko-green text-white py-3 rounded-xl font-bold shadow-lg shadow-neko-green/30 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                <i class="fa-solid fa-download"></i> 安裝 App
+            </button>
         </div>
     </div>
 
@@ -177,11 +200,17 @@
     <!-- Header -->
     <header class="pt-12 pb-2 px-6 bg-white sticky top-0 z-10 bg-opacity-90 backdrop-blur-sm">
         <div class="flex justify-between items-center mb-1">
-            <div class="w-8"></div>
+            <!-- 左側安裝按鈕 -->
+            <button onclick="checkForInstall()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-400 hover:text-neko-green hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95">
+                <i class="fa-solid fa-download"></i>
+            </button>
+
             <h1 class="text-2xl font-bold text-neko-dark tracking-widest flex items-center justify-center relative">
                 <i class="fa-solid fa-cat text-neko-green mr-2"></i>貓咪記帳本
             </h1>
-            <button onclick="toggleStatsModal()" class="w-10 h-10 rounded-full bg-neko-bg shadow-md border border-gray-100 text-neko-green hover:bg-neko-green hover:text-white transition-colors flex items-center justify-center">
+            
+            <!-- 右側統計按鈕 -->
+            <button onclick="toggleStatsModal()" class="w-10 h-10 rounded-full bg-neko-bg shadow-md border border-gray-100 text-neko-green hover:bg-neko-green hover:text-white transition-colors flex items-center justify-center active:scale-95">
                 <i class="fa-solid fa-chart-simple"></i>
             </button>
         </div>
@@ -217,11 +246,12 @@
 
     <!-- 列表區域 -->
     <main class="flex-1 overflow-y-auto px-5 pb-36 no-scrollbar relative z-10" id="expense-list-container">
-        <div id="empty-state" class="text-center mt-12 opacity-40 hidden">
+        <!-- 空白狀態 (更新樣式) -->
+        <div id="empty-state" class="text-center mt-20 hidden">
             <div class="mb-4 text-6xl text-gray-300">
                 <i class="fa-solid fa-box-open"></i>
             </div>
-            <p class="text-gray-500">這個月還沒有花費喵～<br>按下肉球麥克風開始記帳！</p>
+            <p class="text-gray-500 font-bold text-lg">這個月還沒有花費喵～<br>按下肉球按鈕開始記帳！</p>
         </div>
         
         <ul id="expense-list" class="space-y-3 mt-4 pb-10"></ul>
@@ -248,11 +278,12 @@
         </div>
 
         <div class="absolute left-1/2 -translate-x-1/2 -top-10">
-            <button id="mic-btn" class="w-20 h-20 rounded-full bg-neko-green text-white text-3xl shadow-xl shadow-neko-green/40 flex items-center justify-center transition-transform active:scale-95 border-[6px] border-white group relative">
-                <i class="fa-solid fa-microphone group-hover:scale-110 transition-transform"></i>
+            <!-- 麥克風按鈕 (更新圖標) -->
+            <button id="mic-btn" class="w-20 h-20 rounded-full bg-neko-green text-white shadow-xl shadow-neko-green/40 flex items-center justify-center transition-transform active:scale-95 border-[6px] border-white group relative overflow-hidden">
+                <i class="fa-solid fa-paw text-3xl group-hover:scale-110 transition-transform relative z-10"></i>
                 <!-- 貓耳朵裝飾 -->
-                <div class="absolute -top-1 left-3 w-4 h-4 bg-white transform rotate-45 z-[-1]"></div>
-                <div class="absolute -top-1 right-3 w-4 h-4 bg-white transform rotate-45 z-[-1]"></div>
+                <div class="absolute -top-1 left-3 w-4 h-4 bg-white transform rotate-45 z-0"></div>
+                <div class="absolute -top-1 right-3 w-4 h-4 bg-white transform rotate-45 z-0"></div>
             </button>
         </div>
     </footer>
@@ -285,6 +316,37 @@
             document.head.appendChild(appleIcon);
         }
         initPWA();
+
+        // --- 1.5 PWA 安裝邏輯 ---
+        let deferredPrompt;
+        const installPrompt = document.getElementById('install-prompt');
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        window.checkForInstall = function() {
+            if (deferredPrompt) {
+                installPrompt.classList.remove('hidden');
+            } else {
+                alert('🐱 安裝教學 (iOS/已安裝)：\n\n1. 點擊瀏覽器底部的「分享」按鈕\n2. 選擇「加入主畫面」\n\n這樣就可以像 App 一樣使用囉！');
+            }
+        };
+
+        window.dismissInstall = function() {
+            installPrompt.classList.add('hidden');
+        };
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installPrompt.classList.add('hidden');
+            }
+        });
 
         // --- 2. 變數與 DOM ---
         const micBtn = document.getElementById('mic-btn');
@@ -351,15 +413,13 @@
                 return expDate.getFullYear() === year && expDate.getMonth() === (month - 1);
             });
 
-            // 修改排序邏輯：優先依照「選擇的日期」排序，日期相同再依照「建立時間」排序
+            // 排序：優先依照「選擇的日期」排序，日期相同再依照「建立時間」排序
             filteredExpenses.sort((a, b) => {
                 const dateA = new Date(a.dateStr);
                 const dateB = new Date(b.dateStr);
-                // 比較日期 (新的在上面)
                 if (dateB - dateA !== 0) {
                     return dateB - dateA;
                 }
-                // 日期相同，比較建立時間 (新的在上面)
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
@@ -426,12 +486,10 @@
                     expenses[index].item = item;
                     expenses[index].price = parseInt(price);
                     expenses[index].dateStr = dateStr;
-                    // 保留原本的 timestamp，但排序現在會優先看 dateStr，所以位置會變動
                 }
                 editingId = null;
                 resetInputUI();
                 
-                // 自動切換到修改後的日期月份，確保使用者看得到結果
                 const selectedDate = new Date(dateStr);
                 currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
             } else {
@@ -467,7 +525,6 @@
                 editingId = id;
                 itemInput.focus();
                 
-                // 更新按鈕狀態
                 addBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
                 addBtn.className = "w-12 h-12 rounded-full bg-neko-orange text-white flex items-center justify-center shadow-md active:scale-90 transition-transform";
                 statusText.textContent = "✏️ 編輯模式：修改後請按勾勾";
@@ -522,7 +579,6 @@
                 itemInput.value = item;
                 priceInput.value = price;
                 
-                // 語音模式下，如果是編輯中，也可以用語音覆蓋，但主要用於新增
                 addExpense();
                 statusText.textContent = `🐱 已記錄: ${item} $${price}`;
                 setTimeout(() => { 
