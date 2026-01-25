@@ -100,26 +100,42 @@
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden relative">
 
-    <!-- 🐾 背景裝飾區 (新增多個漂浮肉球) -->
+    <!-- 🐾 背景裝飾區 (新增多個漂浮肉球，顏色加深) -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <!-- 左上綠色大肉球 -->
-        <div class="absolute top-[12%] -left-8 text-neko-green/10 text-9xl rotate-[25deg] bg-paw" style="--r: 25deg;">
+        <div class="absolute top-[12%] -left-8 text-neko-green/20 text-9xl rotate-[25deg] bg-paw" style="--r: 25deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
         <!-- 右上橘色肉球 -->
-        <div class="absolute top-[8%] -right-6 text-neko-orange/10 text-8xl -rotate-[15deg] bg-paw" style="animation-delay: 1s; --r: -15deg;">
+        <div class="absolute top-[8%] -right-6 text-neko-orange/20 text-8xl -rotate-[15deg] bg-paw" style="animation-delay: 1s; --r: -15deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
         <!-- 中間下方綠色小肉球 -->
-        <div class="absolute bottom-[35%] left-[15%] text-neko-green/10 text-6xl rotate-12 bg-paw" style="animation-delay: 2s; --r: 12deg;">
+        <div class="absolute bottom-[35%] left-[15%] text-neko-green/20 text-6xl rotate-12 bg-paw" style="animation-delay: 2s; --r: 12deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
         <!-- 右下超大橘色肉球 -->
-        <div class="absolute bottom-[20%] -right-12 text-neko-orange/5 text-[10rem] -rotate-45 bg-paw" style="animation-delay: 1.5s; --r: -45deg;">
+        <div class="absolute bottom-[20%] -right-12 text-neko-orange/10 text-[10rem] -rotate-45 bg-paw" style="animation-delay: 1.5s; --r: -45deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
         <!-- 左下隱藏版肉球 -->
-        <div class="absolute bottom-[10%] left-[-20px] text-neko-green/5 text-8xl rotate-[60deg] bg-paw" style="animation-delay: 0.5s; --r: 60deg;">
+        <div class="absolute bottom-[10%] left-[-20px] text-neko-green/10 text-8xl rotate-[60deg] bg-paw" style="animation-delay: 0.5s; --r: 60deg;">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+        <!-- 新增：正上方淡橘色 -->
+        <div class="absolute top-[-20px] left-[40%] text-neko-orange/15 text-7xl rotate-[180deg] bg-paw" style="animation-delay: 3s; --r: 180deg;">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+        <!-- 新增：左中綠色 -->
+        <div class="absolute top-[40%] left-[-10px] text-neko-green/15 text-5xl rotate-[10deg] bg-paw" style="animation-delay: 1.2s; --r: 10deg;">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+        <!-- 新增：右中橘色 -->
+        <div class="absolute top-[50%] right-[10%] text-neko-orange/15 text-6xl -rotate-[20deg] bg-paw" style="animation-delay: 2.5s; --r: -20deg;">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+        <!-- 新增：左下角深一點的綠 -->
+        <div class="absolute bottom-[5%] left-[20%] text-neko-green/20 text-4xl rotate-[45deg] bg-paw" style="animation-delay: 0.8s; --r: 45deg;">
             <i class="fa-solid fa-paw"></i>
         </div>
     </div>
@@ -335,7 +351,18 @@
                 return expDate.getFullYear() === year && expDate.getMonth() === (month - 1);
             });
 
-            filteredExpenses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            // 修改排序邏輯：優先依照「選擇的日期」排序，日期相同再依照「建立時間」排序
+            filteredExpenses.sort((a, b) => {
+                const dateA = new Date(a.dateStr);
+                const dateB = new Date(b.dateStr);
+                // 比較日期 (新的在上面)
+                if (dateB - dateA !== 0) {
+                    return dateB - dateA;
+                }
+                // 日期相同，比較建立時間 (新的在上面)
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+
             const total = filteredExpenses.reduce((sum, item) => sum + item.price, 0);
             monthlyTotalEl.textContent = total.toLocaleString();
 
@@ -399,9 +426,14 @@
                     expenses[index].item = item;
                     expenses[index].price = parseInt(price);
                     expenses[index].dateStr = dateStr;
+                    // 保留原本的 timestamp，但排序現在會優先看 dateStr，所以位置會變動
                 }
                 editingId = null;
                 resetInputUI();
+                
+                // 自動切換到修改後的日期月份，確保使用者看得到結果
+                const selectedDate = new Date(dateStr);
+                currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
             } else {
                 expenses.push({
                     id: Date.now(),
@@ -434,9 +466,11 @@
                 dateInput.value = exp.dateStr;
                 editingId = id;
                 itemInput.focus();
-                addBtn.innerHTML = '<i class="fa-solid fa-rotate"></i>';
+                
+                // 更新按鈕狀態
+                addBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
                 addBtn.className = "w-12 h-12 rounded-full bg-neko-orange text-white flex items-center justify-center shadow-md active:scale-90 transition-transform";
-                statusText.textContent = "✏️ 編輯模式";
+                statusText.textContent = "✏️ 編輯模式：修改後請按勾勾";
             }
         };
 
@@ -468,7 +502,7 @@
             recognition.onend = () => {
                 isListening = false;
                 micBtn.classList.remove('mic-active');
-                if(!statusText.textContent.includes("已新增")) statusText.textContent = "";
+                if(!statusText.textContent.includes("已新增") && !editingId) statusText.textContent = "";
             };
 
             recognition.onresult = (event) => {
@@ -487,9 +521,13 @@
                 if (!item) item = "未命名";
                 itemInput.value = item;
                 priceInput.value = price;
+                
+                // 語音模式下，如果是編輯中，也可以用語音覆蓋，但主要用於新增
                 addExpense();
                 statusText.textContent = `🐱 已記錄: ${item} $${price}`;
-                setTimeout(() => { statusText.textContent = ""; }, 2500);
+                setTimeout(() => { 
+                    if(!editingId) statusText.textContent = ""; 
+                }, 2500);
             } else {
                 statusText.textContent = "聽不懂金額喵...";
             }
