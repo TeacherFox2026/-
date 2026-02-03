@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="貓咪記帳">
-    <!-- 主題色改為白色 -->
+    <!-- 主題色 -->
     <meta name="theme-color" content="#FFFFFF">
 
     <!-- 引入字體與圖標 -->
@@ -20,17 +20,17 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Tailwind Config: 馬卡龍貓咪配色 + 白底 -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'neko-green': '#2EC4B6',      /* 馬卡龍深綠 */
-                        'neko-green-light': '#CBF3F0', /* 淺綠背景 */
-                        'neko-orange': '#FF9F1C',      /* 貓咪橘/珊瑚色 */
-                        'neko-bg': '#FFFFFF',          /* ☁️ 純淨白 */
-                        'neko-dark': '#2D3436'         /* 深灰字體 */
+                        'neko-green': '#2EC4B6',
+                        'neko-green-light': '#CBF3F0',
+                        'neko-orange': '#FF9F1C',
+                        'neko-bg': '#FFFFFF',
+                        'neko-dark': '#2D3436'
                     },
                     fontFamily: {
                         'sans': ['"Zen Maru Gothic"', 'sans-serif'],
@@ -42,153 +42,119 @@
 
     <style>
         body {
-            background-color: #FFFFFF; /* 背景改為白色 */
+            background-color: #FFFFFF;
             color: #2D3436;
             font-family: 'Zen Maru Gothic', sans-serif;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
         }
 
-        /* 錄音呼吸燈 */
+        /* 動畫設定 */
         @keyframes pulse-ring {
             0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255, 159, 28, 0.7); }
             70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 159, 28, 0); }
             100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255, 159, 28, 0); }
         }
-
-        .mic-active {
-            animation: pulse-ring 1.5s infinite;
-            background-color: #FF9F1C !important;
-            border-color: #FF9F1C !important;
-        }
-
+        .mic-active { animation: pulse-ring 1.5s infinite; background-color: #FF9F1C !important; border-color: #FF9F1C !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
         .slide-in { animation: slideIn 0.3s ease-out forwards; }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 淡入動畫 */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 日期選擇器樣式優化 */
-        input[type="date"] {
-            position: relative;
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            background: transparent;
-            bottom: 0;
-            color: transparent;
-            cursor: pointer;
-            height: auto;
-            left: 0;
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: auto;
-        }
+        /* 日期選擇器 */
+        input[type="date"] { position: relative; }
+        input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
         
-        /* 漂浮肉球動畫 */
-        @keyframes float-paw {
-            0%, 100% { transform: translateY(0) rotate(var(--r)); }
-            50% { transform: translateY(-10px) rotate(var(--r)); }
-        }
-        .bg-paw {
-            animation: float-paw 6s ease-in-out infinite;
-        }
+        /* 漂浮肉球 */
+        @keyframes float-paw { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-10px) rotate(var(--r)); } }
+        .bg-paw { animation: float-paw 6s ease-in-out infinite; }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden relative">
 
-    <!-- 🐾 背景裝飾區 (漂浮肉球，顏色加深) -->
+    <!-- 背景裝飾 -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <!-- 左上綠色大肉球 -->
-        <div class="absolute top-[12%] -left-8 text-neko-green/20 text-9xl rotate-[25deg] bg-paw" style="--r: 25deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 右上橘色肉球 -->
-        <div class="absolute top-[8%] -right-6 text-neko-orange/20 text-8xl -rotate-[15deg] bg-paw" style="animation-delay: 1s; --r: -15deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 中間下方綠色小肉球 -->
-        <div class="absolute bottom-[35%] left-[15%] text-neko-green/20 text-6xl rotate-12 bg-paw" style="animation-delay: 2s; --r: 12deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 右下超大橘色肉球 -->
-        <div class="absolute bottom-[20%] -right-12 text-neko-orange/10 text-[10rem] -rotate-45 bg-paw" style="animation-delay: 1.5s; --r: -45deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 左下隱藏版肉球 -->
-        <div class="absolute bottom-[10%] left-[-20px] text-neko-green/10 text-8xl rotate-[60deg] bg-paw" style="animation-delay: 0.5s; --r: 60deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 正上方淡橘色 -->
-        <div class="absolute top-[-20px] left-[40%] text-neko-orange/15 text-7xl rotate-[180deg] bg-paw" style="animation-delay: 3s; --r: 180deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 左中綠色 -->
-        <div class="absolute top-[40%] left-[-10px] text-neko-green/15 text-5xl rotate-[10deg] bg-paw" style="animation-delay: 1.2s; --r: 10deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 右中橘色 -->
-        <div class="absolute top-[50%] right-[10%] text-neko-orange/15 text-6xl -rotate-[20deg] bg-paw" style="animation-delay: 2.5s; --r: -20deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
-        <!-- 左下角深一點的綠 -->
-        <div class="absolute bottom-[5%] left-[20%] text-neko-green/20 text-4xl rotate-[45deg] bg-paw" style="animation-delay: 0.8s; --r: 45deg;">
-            <i class="fa-solid fa-paw"></i>
-        </div>
+        <div class="absolute top-[12%] -left-8 text-neko-green/20 text-9xl rotate-[25deg] bg-paw" style="--r: 25deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute top-[8%] -right-6 text-neko-orange/20 text-8xl -rotate-[15deg] bg-paw" style="animation-delay: 1s; --r: -15deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute bottom-[35%] left-[15%] text-neko-green/20 text-6xl rotate-12 bg-paw" style="animation-delay: 2s; --r: 12deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute bottom-[20%] -right-12 text-neko-orange/10 text-[10rem] -rotate-45 bg-paw" style="animation-delay: 1.5s; --r: -45deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute bottom-[10%] left-[-20px] text-neko-green/10 text-8xl rotate-[60deg] bg-paw" style="animation-delay: 0.5s; --r: 60deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute top-[-20px] left-[40%] text-neko-orange/15 text-7xl rotate-[180deg] bg-paw" style="animation-delay: 3s; --r: 180deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute top-[40%] left-[-10px] text-neko-green/15 text-5xl rotate-[10deg] bg-paw" style="animation-delay: 1.2s; --r: 10deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute top-[50%] right-[10%] text-neko-orange/15 text-6xl -rotate-[20deg] bg-paw" style="animation-delay: 2.5s; --r: -20deg;"><i class="fa-solid fa-paw"></i></div>
+        <div class="absolute bottom-[5%] left-[20%] text-neko-green/20 text-4xl rotate-[45deg] bg-paw" style="animation-delay: 0.8s; --r: 45deg;"><i class="fa-solid fa-paw"></i></div>
     </div>
 
-    <!-- PWA 安裝提示 (預設隱藏) -->
+    <!-- PWA 安裝提示 -->
     <div id="install-prompt" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end justify-center pb-10 fade-in backdrop-blur-sm">
         <div class="bg-white w-[90%] max-w-md rounded-3xl p-6 shadow-2xl relative border-4 border-neko-green-light">
             <button onclick="dismissInstall()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times text-xl"></i></button>
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-neko-green-light rounded-2xl flex items-center justify-center text-3xl text-neko-green">
-                    <i class="fa-solid fa-cat"></i>
-                </div>
+                <div class="w-16 h-16 bg-neko-green-light rounded-2xl flex items-center justify-center text-3xl text-neko-green"><i class="fa-solid fa-cat"></i></div>
                 <div>
                     <h3 class="font-bold text-xl text-neko-dark">安裝貓咪記帳本</h3>
                     <p class="text-xs text-gray-500 mt-1">加到主畫面，記帳更方便！<br>還可以離線使用喔 🐾</p>
                 </div>
             </div>
-            <button id="install-btn" class="w-full mt-5 bg-neko-green text-white py-3 rounded-xl font-bold shadow-lg shadow-neko-green/30 active:scale-95 transition-transform flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> 安裝 App
-            </button>
+            <button id="install-btn" class="w-full mt-5 bg-neko-green text-white py-3 rounded-xl font-bold shadow-lg shadow-neko-green/30 active:scale-95 transition-transform flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> 安裝 App</button>
         </div>
     </div>
 
-    <!-- 區間查詢 Modal -->
-    <div id="stats-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center fade-in backdrop-blur-sm">
-        <div class="bg-white w-[85%] max-w-sm rounded-3xl p-6 shadow-2xl relative transform transition-all scale-100 border-4 border-neko-green-light">
-            <button onclick="toggleStatsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-times text-xl"></i>
-            </button>
+    <!-- 設定與資料管理 Modal (NEW) -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center fade-in backdrop-blur-sm">
+        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl relative transform transition-all scale-100 border-4 border-gray-100">
+            <button onclick="toggleSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times text-xl"></i></button>
             
-            <h3 class="text-xl font-bold text-neko-green mb-4 flex items-center">
-                <i class="fa-solid fa-chart-pie mr-2"></i>區間統計
+            <h3 class="text-xl font-bold text-gray-700 mb-6 flex items-center">
+                <i class="fa-solid fa-database mr-2 text-neko-orange"></i>資料管理
             </h3>
             
-            <div class="space-y-4">
+            <div class="space-y-6">
+                <!-- 備份還原區 -->
                 <div>
-                    <label class="text-xs text-gray-500 font-bold ml-1">開始日期</label>
-                    <input type="date" id="search-start" class="w-full bg-neko-green-light/30 rounded-xl px-4 py-3 text-neko-dark outline-none focus:ring-2 focus:ring-neko-green">
+                    <p class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">系統備份 (JSON)</p>
+                    <div class="flex gap-3">
+                        <button onclick="exportJSON()" class="flex-1 bg-neko-green-light text-neko-green font-bold py-3 rounded-xl hover:bg-neko-green hover:text-white transition-colors flex flex-col items-center justify-center gap-1 active:scale-95">
+                            <i class="fa-solid fa-file-export text-xl"></i>
+                            <span class="text-xs">匯出備份</span>
+                        </button>
+                        <button onclick="triggerImport()" class="flex-1 bg-neko-green-light text-neko-green font-bold py-3 rounded-xl hover:bg-neko-green hover:text-white transition-colors flex flex-col items-center justify-center gap-1 active:scale-95">
+                            <i class="fa-solid fa-file-import text-xl"></i>
+                            <span class="text-xs">匯入還原</span>
+                        </button>
+                        <!-- 隱藏的檔案輸入框 -->
+                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importJSON(this)">
+                    </div>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold ml-1">結束日期</label>
-                    <input type="date" id="search-end" class="w-full bg-neko-green-light/30 rounded-xl px-4 py-3 text-neko-dark outline-none focus:ring-2 focus:ring-neko-green">
-                </div>
-                
-                <button onclick="calculateRangeTotal()" class="w-full bg-neko-green text-white font-bold py-3 rounded-xl shadow-lg shadow-neko-green/30 active:scale-95 transition-transform">
-                    計算總額
-                </button>
-            </div>
 
+                <div class="w-full h-px bg-gray-100"></div>
+
+                <!-- Excel 匯出區 -->
+                <div>
+                    <p class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">報表下載 (Excel)</p>
+                    <button onclick="exportCSV()" class="w-full bg-green-500 text-white font-bold py-3 rounded-xl shadow-md hover:bg-green-600 transition-colors flex items-center justify-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-file-csv text-lg"></i> 匯出 CSV 報表
+                    </button>
+                    <p class="text-[10px] text-gray-400 mt-2 text-center">
+                        <i class="fa-solid fa-circle-info mr-1"></i>支援 Excel 開啟，中文不亂碼
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 區間統計 Modal -->
+    <div id="stats-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center fade-in backdrop-blur-sm">
+        <div class="bg-white w-[85%] max-w-sm rounded-3xl p-6 shadow-2xl relative transform transition-all scale-100 border-4 border-neko-green-light">
+            <button onclick="toggleStatsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times text-xl"></i></button>
+            <h3 class="text-xl font-bold text-neko-green mb-4 flex items-center"><i class="fa-solid fa-chart-pie mr-2"></i>區間統計</h3>
+            <div class="space-y-4">
+                <div><label class="text-xs text-gray-500 font-bold ml-1">開始日期</label><input type="date" id="search-start" class="w-full bg-neko-green-light/30 rounded-xl px-4 py-3 text-neko-dark outline-none focus:ring-2 focus:ring-neko-green"></div>
+                <div><label class="text-xs text-gray-500 font-bold ml-1">結束日期</label><input type="date" id="search-end" class="w-full bg-neko-green-light/30 rounded-xl px-4 py-3 text-neko-dark outline-none focus:ring-2 focus:ring-neko-green"></div>
+                <button onclick="calculateRangeTotal()" class="w-full bg-neko-green text-white font-bold py-3 rounded-xl shadow-lg shadow-neko-green/30 active:scale-95 transition-transform">計算總額</button>
+            </div>
             <div id="range-result-area" class="mt-6 pt-4 border-t border-dashed border-gray-200 hidden">
                 <p class="text-center text-gray-500 text-sm mb-1">該區間總支出</p>
                 <p class="text-center text-3xl font-bold text-neko-orange" id="range-total-display">$0</p>
@@ -201,66 +167,50 @@
     <header class="pt-12 pb-2 px-6 bg-white sticky top-0 z-10 bg-opacity-90 backdrop-blur-sm">
         <div class="flex justify-between items-center mb-1">
             <!-- 左側安裝按鈕 -->
-            <button onclick="checkForInstall()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-400 hover:text-neko-green hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95">
-                <i class="fa-solid fa-download"></i>
-            </button>
+            <button onclick="checkForInstall()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-400 hover:text-neko-green hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95"><i class="fa-solid fa-download"></i></button>
 
-            <h1 class="text-2xl font-bold text-neko-dark tracking-widest flex items-center justify-center relative">
-                <i class="fa-solid fa-cat text-neko-green mr-2"></i>貓咪記帳本
-            </h1>
+            <h1 class="text-2xl font-bold text-neko-dark tracking-widest flex items-center justify-center relative"><i class="fa-solid fa-cat text-neko-green mr-2"></i>貓咪記帳本</h1>
             
-            <!-- 右側統計按鈕 -->
-            <button onclick="toggleStatsModal()" class="w-10 h-10 rounded-full bg-neko-bg shadow-md border border-gray-100 text-neko-green hover:bg-neko-green hover:text-white transition-colors flex items-center justify-center active:scale-95">
-                <i class="fa-solid fa-chart-simple"></i>
-            </button>
+            <!-- 右側功能區 -->
+            <div class="flex gap-2">
+                <!-- 設定/資料按鈕 (NEW) -->
+                <button onclick="toggleSettingsModal()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-neko-orange hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+                <!-- 統計按鈕 -->
+                <button onclick="toggleStatsModal()" class="w-10 h-10 rounded-full bg-neko-bg shadow-md border border-gray-100 text-neko-green hover:bg-neko-green hover:text-white transition-colors flex items-center justify-center active:scale-95">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </button>
+            </div>
         </div>
     </header>
 
     <!-- 總金額卡片 -->
     <section class="px-5 mt-2 mb-2 shrink-0 relative z-10">
         <div class="bg-neko-green rounded-[32px] p-6 text-center shadow-lg shadow-neko-green/20 text-white relative overflow-hidden">
-            <div class="absolute -top-6 -right-6 text-white opacity-10 text-9xl rotate-12">
-                <i class="fa-solid fa-paw"></i>
-            </div>
-
+            <div class="absolute -top-6 -right-6 text-white opacity-10 text-9xl rotate-12"><i class="fa-solid fa-paw"></i></div>
             <div class="flex justify-center items-center gap-4 mb-2 opacity-90">
-                <button onclick="changeMonth(-1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 active:bg-white/30 transition-colors">
-                    <i class="fa-solid fa-chevron-left text-sm"></i>
-                </button>
-                <div class="text-sm font-bold bg-white/20 px-4 py-1 rounded-full backdrop-blur-sm flex items-center">
-                    <i class="fa-regular fa-calendar-days mr-2"></i>
-                    <span id="current-month-display">--</span>
-                </div>
-                <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 active:bg-white/30 transition-colors">
-                    <i class="fa-solid fa-chevron-right text-sm"></i>
-                </button>
+                <button onclick="changeMonth(-1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 active:bg-white/30 transition-colors"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+                <div class="text-sm font-bold bg-white/20 px-4 py-1 rounded-full backdrop-blur-sm flex items-center"><i class="fa-regular fa-calendar-days mr-2"></i><span id="current-month-display">--</span></div>
+                <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 active:bg-white/30 transition-colors"><i class="fa-solid fa-chevron-right text-sm"></i></button>
             </div>
-            
-            <div class="text-5xl font-bold tracking-wider flex justify-center items-baseline mt-1 drop-shadow-sm">
-                <span class="text-2xl mr-1 opacity-80">$</span>
-                <span id="monthly-total">0</span>
-            </div>
+            <div class="text-5xl font-bold tracking-wider flex justify-center items-baseline mt-1 drop-shadow-sm"><span class="text-2xl mr-1 opacity-80">$</span><span id="monthly-total">0</span></div>
             <p class="text-xs opacity-70 mt-2">記得買罐罐喔！</p>
         </div>
     </section>
 
     <!-- 列表區域 -->
     <main class="flex-1 overflow-y-auto px-5 pb-36 no-scrollbar relative z-10" id="expense-list-container">
-        <!-- 空白狀態 (更新樣式) -->
         <div id="empty-state" class="text-center mt-20 hidden">
-            <div class="mb-4 text-6xl text-gray-300">
-                <i class="fa-solid fa-box-open"></i>
-            </div>
+            <div class="mb-4 text-6xl text-gray-300"><i class="fa-solid fa-box-open"></i></div>
             <p class="text-gray-500 font-bold text-lg">這個月還沒有花費喵～<br>按下肉球按鈕開始記帳！</p>
         </div>
-        
         <ul id="expense-list" class="space-y-3 mt-4 pb-10"></ul>
     </main>
 
     <!-- 底部控制區 -->
     <footer class="fixed bottom-0 left-0 w-full bg-white rounded-t-[30px] shadow-[0_-5px_30px_rgba(0,0,0,0.06)] p-5 z-20 pb-safe-area">
         <div id="status-text" class="text-center text-xs text-neko-orange mb-4 h-4 font-bold transition-all"></div>
-
         <div class="flex items-center gap-2 mb-2">
             <div class="flex-1 bg-gray-50 rounded-2xl p-1 flex items-center border border-gray-200 shadow-inner transition-all focus-within:border-neko-green focus-within:ring-2 focus-within:ring-neko-green/20 relative">
                 <div class="relative w-10 h-full flex items-center justify-center border-r border-gray-200">
@@ -271,84 +221,38 @@
                 <div class="w-px h-5 bg-gray-200"></div>
                 <input type="number" id="price-input" placeholder="$" class="w-1/3 bg-transparent border-none focus:ring-0 text-sm px-3 py-3 font-bold text-neko-green placeholder-neko-green/40 outline-none">
             </div>
-
-            <button id="add-btn" class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 hover:bg-neko-green hover:text-white transition-all flex items-center justify-center shadow-sm active:scale-90">
-                <i class="fa-solid fa-check"></i>
-            </button>
+            <button id="add-btn" class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 hover:bg-neko-green hover:text-white transition-all flex items-center justify-center shadow-sm active:scale-90"><i class="fa-solid fa-check"></i></button>
         </div>
-
         <div class="absolute left-1/2 -translate-x-1/2 -top-10">
-            <!-- 麥克風按鈕 (更新圖標) -->
             <button id="mic-btn" class="w-20 h-20 rounded-full bg-neko-green text-white shadow-xl shadow-neko-green/40 flex items-center justify-center transition-transform active:scale-95 border-[6px] border-white group relative overflow-hidden">
                 <i class="fa-solid fa-paw text-3xl group-hover:scale-110 transition-transform relative z-10"></i>
-                <!-- 貓耳朵裝飾 -->
                 <div class="absolute -top-1 left-3 w-4 h-4 bg-white transform rotate-45 z-0"></div>
                 <div class="absolute -top-1 right-3 w-4 h-4 bg-white transform rotate-45 z-0"></div>
             </button>
         </div>
     </footer>
 
-    <style>
-        .pb-safe-area { padding-bottom: env(safe-area-inset-bottom, 20px); }
-    </style>
+    <style>.pb-safe-area { padding-bottom: env(safe-area-inset-bottom, 20px); }</style>
 
     <script>
-        // --- 1. PWA Manifest ---
+        // --- PWA Setup ---
         function initPWA() {
             const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#2EC4B6" rx="100"/><path d="M256 160c-25 0-45 20-45 45s20 45 45 45 45-20 45-45-20-45-45-45zm-110 50c-25 0-45 20-45 45s20 45 45 45 45-20 45-45-20-45-45-45zm220 0c-25 0-45 20-45 45s20 45 45 45 45-20 45-45-20-45-45-45zM256 280c-55 0-100 45-100 100v20c0 22 18 40 40 40h120c22 0 40-18 40-40v-20c0-55-45-100-100-100z" fill="#FFF"/></svg>`;
             const iconUrl = 'data:image/svg+xml;base64,' + btoa(iconSvg);
-            const manifest = {
-                "name": "貓咪記帳本",
-                "short_name": "貓咪記帳",
-                "start_url": ".",
-                "display": "standalone",
-                "background_color": "#FFFFFF",
-                "theme_color": "#2EC4B6",
-                "icons": [{"src": iconUrl, "sizes": "512x512", "type": "image/svg+xml"}]
-            };
-            const link = document.createElement('link');
-            link.rel = 'manifest';
-            link.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
-            document.head.appendChild(link);
-            const appleIcon = document.createElement('link');
-            appleIcon.rel = 'apple-touch-icon';
-            appleIcon.href = iconUrl;
-            document.head.appendChild(appleIcon);
+            const manifest = { "name": "貓咪記帳本", "short_name": "貓咪記帳", "start_url": ".", "display": "standalone", "background_color": "#FFFFFF", "theme_color": "#2EC4B6", "icons": [{"src": iconUrl, "sizes": "512x512", "type": "image/svg+xml"}] };
+            const link = document.createElement('link'); link.rel = 'manifest'; link.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest)); document.head.appendChild(link);
+            const appleIcon = document.createElement('link'); appleIcon.rel = 'apple-touch-icon'; appleIcon.href = iconUrl; document.head.appendChild(appleIcon);
         }
         initPWA();
 
-        // --- 1.5 PWA 安裝邏輯 ---
         let deferredPrompt;
         const installPrompt = document.getElementById('install-prompt');
-        const installBtn = document.getElementById('install-btn');
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+        window.checkForInstall = function() { if (deferredPrompt) { installPrompt.classList.remove('hidden'); } else { alert('🐱 安裝教學 (iOS/已安裝)：\n\n1. 點擊瀏覽器底部的「分享」按鈕\n2. 選擇「加入主畫面」'); } };
+        window.dismissInstall = function() { installPrompt.classList.add('hidden'); };
+        document.getElementById('install-btn').addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; installPrompt.classList.add('hidden'); } });
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        window.checkForInstall = function() {
-            if (deferredPrompt) {
-                installPrompt.classList.remove('hidden');
-            } else {
-                alert('🐱 安裝教學 (iOS/已安裝)：\n\n1. 點擊瀏覽器底部的「分享」按鈕\n2. 選擇「加入主畫面」\n\n這樣就可以像 App 一樣使用囉！');
-            }
-        };
-
-        window.dismissInstall = function() {
-            installPrompt.classList.add('hidden');
-        };
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installPrompt.classList.add('hidden');
-            }
-        });
-
-        // --- 2. 變數與 DOM ---
+        // --- Core Logic ---
         const micBtn = document.getElementById('mic-btn');
         const addBtn = document.getElementById('add-btn');
         const itemInput = document.getElementById('item-input');
@@ -360,13 +264,13 @@
         const statusText = document.getElementById('status-text');
         const emptyState = document.getElementById('empty-state');
         const statsModal = document.getElementById('stats-modal');
+        const settingsModal = document.getElementById('settings-modal');
 
         let expenses = [];
         let isListening = false;
         let editingId = null;
         let currentViewDate = new Date();
 
-        // --- 3. 初始化 ---
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             setTodayDateInput();
@@ -374,59 +278,34 @@
             renderView();
         });
 
-        function setTodayDateInput() {
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.value = today;
-        }
-
+        function setTodayDateInput() { dateInput.value = new Date().toISOString().split('T')[0]; }
         function initSearchDateInputs() {
             const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-            const today = now.toISOString().split('T')[0];
-            document.getElementById('search-start').value = firstDay;
-            document.getElementById('search-end').value = today;
+            document.getElementById('search-start').value = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            document.getElementById('search-end').value = now.toISOString().split('T')[0];
         }
 
-        function loadData() {
-            const stored = localStorage.getItem('neko_expenses');
-            if (stored) expenses = JSON.parse(stored);
-        }
-
-        function saveData() {
-            localStorage.setItem('neko_expenses', JSON.stringify(expenses));
-            renderView();
-        }
-
-        // --- 4. 視圖渲染 ---
-        function changeMonth(offset) {
-            currentViewDate.setMonth(currentViewDate.getMonth() + offset);
-            renderView();
-        }
+        function loadData() { const stored = localStorage.getItem('neko_expenses'); if (stored) expenses = JSON.parse(stored); }
+        function saveData() { localStorage.setItem('neko_expenses', JSON.stringify(expenses)); renderView(); }
+        function changeMonth(offset) { currentViewDate.setMonth(currentViewDate.getMonth() + offset); renderView(); }
 
         function renderView() {
             const year = currentViewDate.getFullYear();
             const month = currentViewDate.getMonth() + 1;
             currentMonthDisplay.textContent = `${year}年 ${month}月`;
-
-            const filteredExpenses = expenses.filter(exp => {
-                const expDate = new Date(exp.dateStr);
-                return expDate.getFullYear() === year && expDate.getMonth() === (month - 1);
-            });
-
-            // 排序：優先依照「選擇的日期」排序，日期相同再依照「建立時間」排序
+            const filteredExpenses = expenses.filter(exp => { const d = new Date(exp.dateStr); return d.getFullYear() === year && d.getMonth() === (month - 1); });
+            
+            // 排序：日期(新->舊) > 建立時間(新->舊)
             filteredExpenses.sort((a, b) => {
-                const dateA = new Date(a.dateStr);
-                const dateB = new Date(b.dateStr);
-                if (dateB - dateA !== 0) {
-                    return dateB - dateA;
-                }
+                const da = new Date(a.dateStr), db = new Date(b.dateStr);
+                if (db - da !== 0) return db - da;
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
             const total = filteredExpenses.reduce((sum, item) => sum + item.price, 0);
             monthlyTotalEl.textContent = total.toLocaleString();
-
             expenseList.innerHTML = '';
+
             if (filteredExpenses.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
@@ -434,24 +313,14 @@
                 filteredExpenses.forEach(exp => {
                     const li = document.createElement('li');
                     li.className = 'bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between slide-in border border-gray-100 hover:border-neko-green/30 transition-colors relative overflow-hidden group';
-                    
-                    const expDateObj = new Date(exp.dateStr);
-                    const dayStr = `${expDateObj.getMonth()+1}/${expDateObj.getDate()}`;
-                    
+                    const dayStr = `${new Date(exp.dateStr).getMonth()+1}/${new Date(exp.dateStr).getDate()}`;
                     li.innerHTML = `
-                        <div class="absolute -right-2 -bottom-2 text-neko-green/5 text-4xl transform rotate-12 pointer-events-none group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-paw"></i>
-                        </div>
+                        <div class="absolute -right-2 -bottom-2 text-neko-green/5 text-4xl transform rotate-12 pointer-events-none group-hover:scale-110 transition-transform"><i class="fa-solid fa-paw"></i></div>
                         <div class="flex items-center gap-3 overflow-hidden z-10">
-                            <div class="bg-neko-green-light w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-neko-green">
-                                <i class="fa-solid fa-cat"></i>
-                            </div>
+                            <div class="bg-neko-green-light w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-neko-green"><i class="fa-solid fa-cat"></i></div>
                             <div class="truncate">
                                 <h3 class="font-bold text-gray-700 text-sm truncate">${exp.item}</h3>
-                                <p class="text-xs text-gray-400 font-mono">
-                                    <span class="bg-gray-50 px-1 rounded mr-1 border border-gray-100">${dayStr}</span>
-                                    ${new Date(exp.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                </p>
+                                <p class="text-xs text-gray-400 font-mono"><span class="bg-gray-50 px-1 rounded mr-1 border border-gray-100">${dayStr}</span>${new Date(exp.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0 z-10">
@@ -467,47 +336,23 @@
             }
         }
 
-        // --- 5. 新增/編輯邏輯 ---
         addBtn.addEventListener('click', addExpense);
-
         function addExpense() {
             const item = itemInput.value.trim();
             const price = priceInput.value.trim();
             const dateStr = dateInput.value;
-
-            if (!item || !price || !dateStr) {
-                statusText.textContent = "資料不完整喵！";
-                return;
-            }
-
+            if (!item || !price || !dateStr) { statusText.textContent = "資料不完整喵！"; return; }
+            
             if (editingId) {
                 const index = expenses.findIndex(e => e.id === editingId);
-                if (index !== -1) {
-                    expenses[index].item = item;
-                    expenses[index].price = parseInt(price);
-                    expenses[index].dateStr = dateStr;
-                }
-                editingId = null;
-                resetInputUI();
-                
-                const selectedDate = new Date(dateStr);
-                currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+                if (index !== -1) { expenses[index].item = item; expenses[index].price = parseInt(price); expenses[index].dateStr = dateStr; }
+                editingId = null; resetInputUI();
+                const selectedDate = new Date(dateStr); currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
             } else {
-                expenses.push({
-                    id: Date.now(),
-                    item,
-                    price: parseInt(price),
-                    dateStr: dateStr,
-                    timestamp: new Date().toISOString()
-                });
-                const selectedDate = new Date(dateStr);
-                currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+                expenses.push({ id: Date.now(), item, price: parseInt(price), dateStr, timestamp: new Date().toISOString() });
+                const selectedDate = new Date(dateStr); currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
             }
-            
-            itemInput.value = '';
-            priceInput.value = '';
-            setTodayDateInput();
-            saveData();
+            itemInput.value = ''; priceInput.value = ''; setTodayDateInput(); saveData();
         }
 
         function resetInputUI() {
@@ -519,100 +364,134 @@
         window.editExpense = function(id) {
             const exp = expenses.find(e => e.id === id);
             if (exp) {
-                itemInput.value = exp.item;
-                priceInput.value = exp.price;
-                dateInput.value = exp.dateStr;
-                editingId = id;
-                itemInput.focus();
-                
+                itemInput.value = exp.item; priceInput.value = exp.price; dateInput.value = exp.dateStr;
+                editingId = id; itemInput.focus();
                 addBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
                 addBtn.className = "w-12 h-12 rounded-full bg-neko-orange text-white flex items-center justify-center shadow-md active:scale-90 transition-transform";
                 statusText.textContent = "✏️ 編輯模式：修改後請按勾勾";
             }
         };
 
-        window.deleteExpense = function(id) {
-            if(confirm('要刪除這筆紀錄喵？')) {
-                expenses = expenses.filter(e => e.id !== id);
-                saveData();
-            }
-        };
+        window.deleteExpense = function(id) { if(confirm('要刪除這筆紀錄喵？')) { expenses = expenses.filter(e => e.id !== id); saveData(); } };
 
-        // --- 6. 語音辨識 ---
+        // --- Speech Recognition ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'zh-TW';
-            recognition.continuous = false;
-
-            micBtn.addEventListener('click', () => {
-                if (isListening) recognition.stop();
-                else recognition.start();
-            });
-
-            recognition.onstart = () => {
-                isListening = true;
-                micBtn.classList.add('mic-active');
-                statusText.textContent = "請說 (例如: 罐罐 50元)";
-            };
-
-            recognition.onend = () => {
-                isListening = false;
-                micBtn.classList.remove('mic-active');
-                if(!statusText.textContent.includes("已新增") && !editingId) statusText.textContent = "";
-            };
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                parseAndFill(transcript);
-            };
-        } else {
-            micBtn.style.display = 'none';
-        }
+            const recognition = new SpeechRecognition(); recognition.lang = 'zh-TW'; recognition.continuous = false;
+            micBtn.addEventListener('click', () => { if (isListening) recognition.stop(); else recognition.start(); });
+            recognition.onstart = () => { isListening = true; micBtn.classList.add('mic-active'); statusText.textContent = "請說 (例如: 罐罐 50元)"; };
+            recognition.onend = () => { isListening = false; micBtn.classList.remove('mic-active'); if(!statusText.textContent.includes("已新增") && !editingId) statusText.textContent = ""; };
+            recognition.onresult = (event) => { parseAndFill(event.results[0][0].transcript); };
+        } else { micBtn.style.display = 'none'; }
 
         function parseAndFill(text) {
             const priceMatch = text.match(/\d+/);
             if (priceMatch) {
                 const price = priceMatch[0];
-                let item = text.replace(price, '').replace(/元|塊|錢/g, '').trim();
-                if (!item) item = "未命名";
-                itemInput.value = item;
-                priceInput.value = price;
-                
+                let item = text.replace(price, '').replace(/元|塊|錢/g, '').trim() || "未命名";
+                itemInput.value = item; priceInput.value = price;
                 addExpense();
                 statusText.textContent = `🐱 已記錄: ${item} $${price}`;
-                setTimeout(() => { 
-                    if(!editingId) statusText.textContent = ""; 
-                }, 2500);
-            } else {
-                statusText.textContent = "聽不懂金額喵...";
-            }
+                setTimeout(() => { if(!editingId) statusText.textContent = ""; }, 2500);
+            } else { statusText.textContent = "聽不懂金額喵..."; }
         }
 
-        // --- 7. 區間統計 ---
-        window.toggleStatsModal = function() {
-            statsModal.classList.toggle('hidden');
-            document.getElementById('range-result-area').classList.add('hidden');
-        }
+        // --- Stats & Settings Modals ---
+        window.toggleStatsModal = function() { statsModal.classList.toggle('hidden'); document.getElementById('range-result-area').classList.add('hidden'); }
+        window.toggleSettingsModal = function() { settingsModal.classList.toggle('hidden'); }
 
         window.calculateRangeTotal = function() {
             const startStr = document.getElementById('search-start').value;
             const endStr = document.getElementById('search-end').value;
             if (!startStr || !endStr) return;
-            
-            const rangeExpenses = expenses.filter(exp => {
-                return exp.dateStr >= startStr && exp.dateStr <= endStr;
-            });
-
+            const rangeExpenses = expenses.filter(exp => exp.dateStr >= startStr && exp.dateStr <= endStr);
             const total = rangeExpenses.reduce((sum, item) => sum + item.price, 0);
             document.getElementById('range-total-display').textContent = `$${total.toLocaleString()}`;
             document.getElementById('range-count-display').textContent = `共 ${rangeExpenses.length} 筆資料`;
             document.getElementById('range-result-area').classList.remove('hidden');
         }
 
-        statsModal.addEventListener('click', (e) => {
-            if (e.target === statsModal) toggleStatsModal();
-        });
+        statsModal.addEventListener('click', (e) => { if (e.target === statsModal) toggleStatsModal(); });
+        settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) toggleSettingsModal(); });
+
+        // --- Data Management Functions (NEW) ---
+        
+        // 1. 匯出 JSON 備份
+        window.exportJSON = function() {
+            const dataStr = JSON.stringify(expenses, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `neko_backup_${dateStr}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // 2. 匯入 JSON
+        window.triggerImport = function() { document.getElementById('import-file').click(); };
+        
+        window.importJSON = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    // 簡易驗證格式
+                    if (Array.isArray(importedData) && (importedData.length === 0 || (importedData[0].hasOwnProperty('item') && importedData[0].hasOwnProperty('price')))) {
+                        if(confirm(`確定要匯入 ${importedData.length} 筆資料嗎？\n(目前的資料將會被覆蓋)`)) {
+                            expenses = importedData;
+                            saveData();
+                            alert('匯入成功喵！');
+                            toggleSettingsModal();
+                        }
+                    } else {
+                        alert('檔案格式錯誤，這不是貓咪記帳本的備份檔喔！');
+                    }
+                } catch (err) {
+                    alert('讀取檔案失敗：' + err);
+                }
+                // 清空 input 讓下次可以選同個檔案
+                input.value = ''; 
+            };
+            reader.readAsText(file);
+        };
+
+        // 3. 匯出 Excel (CSV)
+        window.exportCSV = function() {
+            if (expenses.length === 0) { alert('沒有資料可以匯出喵！'); return; }
+
+            // 排序資料 (日期新->舊)
+            const sorted = [...expenses].sort((a, b) => new Date(b.dateStr) - new Date(a.dateStr));
+
+            // 製作 CSV 內容
+            // \uFEFF 是 BOM (Byte Order Mark)，讓 Excel 知道這是 UTF-8 編碼 (防止中文亂碼)
+            let csvContent = "\uFEFF日期,品項,金額\n";
+
+            sorted.forEach(exp => {
+                // 處理品項中的逗號或引號 (Excel CSV 規則)
+                let item = exp.item.replace(/"/g, '""'); // 將雙引號變為兩個雙引號
+                if (item.search(/("|,|\n)/g) >= 0) item = `"${item}"`; // 如果有逗號、換行或引號，整個欄位包起來
+
+                csvContent += `${exp.dateStr},${item},${exp.price}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `neko_report_${dateStr}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
     </script>
 </body>
 </html>
