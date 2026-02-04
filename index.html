@@ -63,13 +63,6 @@
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* iOS 指示箭頭動畫 */
-        @keyframes bounce-down {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(10px); }
-        }
-        .animate-bounce-down { animation: bounce-down 1.5s infinite; }
-
         /* 日期選擇器 */
         input[type="date"] { position: relative; }
         input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
@@ -77,6 +70,13 @@
         /* 漂浮肉球 */
         @keyframes float-paw { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-10px) rotate(var(--r)); } }
         .bg-paw { animation: float-paw 6s ease-in-out infinite; }
+
+        /* 分享按鈕跳動動畫 (取代原本的向下箭頭) */
+        @keyframes bounce-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-bounce-icon { animation: bounce-icon 2s infinite ease-in-out; }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden relative">
@@ -94,33 +94,27 @@
         <div class="absolute bottom-[5%] left-[20%] text-neko-green/20 text-4xl rotate-[45deg] bg-paw" style="animation-delay: 0.8s; --r: 45deg;"><i class="fa-solid fa-paw"></i></div>
     </div>
 
-    <!-- 智慧安裝引導 Modal (NEW) -->
+    <!-- 智慧安裝引導 Modal (修正版) -->
     <div id="install-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center fade-in backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border-4 border-neko-green-light flex flex-col items-center text-center">
             
             <button onclick="dismissInstall()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50"><i class="fa-solid fa-times"></i></button>
             
-            <!-- 圖示 -->
-            <div class="w-20 h-20 bg-neko-green-light rounded-2xl flex items-center justify-center text-4xl text-neko-green mb-4 shadow-sm">
+            <!-- 大標題區塊 -->
+            <div class="w-16 h-16 bg-neko-green-light rounded-2xl flex items-center justify-center text-3xl text-neko-green mb-3 shadow-sm">
                 <i class="fa-solid fa-mobile-screen-button"></i>
             </div>
             
-            <h3 class="font-bold text-xl text-neko-dark mb-2">安裝貓咪記帳本</h3>
+            <h3 class="font-bold text-xl text-neko-dark mb-4">安裝貓咪記帳本</h3>
             
-            <!-- 動態內容區：會根據 OS 改變 -->
-            <div id="install-content" class="text-sm text-gray-500 mb-6 leading-relaxed">
+            <!-- 動態內容區 -->
+            <div id="install-content" class="text-sm text-gray-500 mb-6 leading-relaxed w-full">
                 <!-- Javascript 會填入內容 -->
             </div>
 
             <button onclick="dismissInstall()" class="w-full bg-neko-green text-white py-3 rounded-xl font-bold shadow-lg shadow-neko-green/30 active:scale-95 transition-transform">
                 我知道了喵！
             </button>
-
-            <!-- iOS 專用指示箭頭 (預設隱藏) -->
-            <div id="ios-arrow" class="hidden absolute -bottom-16 left-1/2 -translate-x-1/2 text-white flex flex-col items-center animate-bounce-down">
-                <span class="text-xs font-bold mb-1 shadow-black drop-shadow-md">點擊這裡</span>
-                <i class="fa-solid fa-arrow-down text-3xl drop-shadow-md"></i>
-            </div>
         </div>
     </div>
 
@@ -169,7 +163,7 @@
     <!-- Header -->
     <header class="pt-12 pb-2 px-6 bg-white sticky top-0 z-10 bg-opacity-90 backdrop-blur-sm">
         <div class="flex justify-between items-center mb-1">
-            <!-- 左側安裝按鈕 (有 ID 以便 JS 控制) -->
+            <!-- 左側安裝按鈕 -->
             <button id="install-trigger-btn" onclick="checkForInstall()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-400 hover:text-neko-green hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95"><i class="fa-solid fa-download"></i></button>
 
             <h1 class="text-2xl font-bold text-neko-dark tracking-widest flex items-center justify-center relative"><i class="fa-solid fa-cat text-neko-green mr-2"></i>貓咪記帳本</h1>
@@ -242,27 +236,23 @@
         }
         initPWA();
 
-        // --- 智慧安裝引導邏輯 (NEW) ---
+        // --- 智慧安裝引導邏輯 (修正版) ---
         let deferredPrompt;
         const installModal = document.getElementById('install-modal');
         const installContent = document.getElementById('install-content');
-        const iosArrow = document.getElementById('ios-arrow');
         const installTriggerBtn = document.getElementById('install-trigger-btn');
 
-        // 1. 偵測是否已經是 App 模式 (Standalone)
+        // 1. 偵測 App 模式
         function checkStandalone() {
             if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-                // 如果已經是 App，隱藏安裝按鈕
                 if(installTriggerBtn) installTriggerBtn.style.display = 'none';
             }
         }
         
-        // 初始化檢查
         checkStandalone();
-        // 監聽模式變化 (防止使用者從瀏覽器變更為 App 模式時按鈕沒消失)
         window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
 
-        // 監聽 Android 安裝事件
+        // 2. 偵測 Android 安裝事件
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -270,42 +260,44 @@
 
         window.checkForInstall = function() {
             const ua = navigator.userAgent.toLowerCase();
-            const isIOS = /iphone|ipad|ipod/.test(ua);
+            // 新版 iPadOS 判斷: Macintosh 且支援觸控
+            const isIOS = /iphone|ipad|ipod/.test(ua) || (navigator.platform === 'Macintosh' && navigator.maxTouchPoints > 1);
             const isAndroid = /android/.test(ua);
 
             installModal.classList.remove('hidden');
-            iosArrow.classList.add('hidden'); // 重置箭頭
 
             if (isIOS) {
-                // iOS 情境
+                // iOS 情境 (不分 iPad/iPhone，統一用視覺引導)
                 installContent.innerHTML = `
-                    請點擊瀏覽器下方的 <span class="font-bold text-neko-green">分享按鈕</span> <i class="fa-solid fa-arrow-up-from-bracket"></i><br>
-                    (就是那個有箭頭往上的方塊)<br><br>
-                    然後往下滑選擇 <span class="font-bold text-neko-green">加入主畫面</span><br>
-                    就可以完成安裝囉 ❤
+                    <div class="mb-4 text-center">
+                        <div class="inline-block animate-bounce-icon text-neko-green text-3xl mb-2">
+                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        </div>
+                        <p class="font-bold text-gray-700">請尋找這個「分享按鈕」</p>
+                    </div>
+                    <p class="mb-4">
+                        點擊後，往下滑選擇<br>
+                        <span class="font-bold text-neko-green text-lg">「加入主畫面」</span>
+                    </p>
+                    <p class="text-xs text-gray-400 border-t border-gray-100 pt-2 mt-2">
+                        <i class="fa-solid fa-mobile-screen mr-1"></i>iPhone：通常在螢幕下方<br>
+                        <i class="fa-solid fa-tablet-screen-button mr-1"></i>iPad：通常在螢幕右上方
+                    </p>
                 `;
-                iosArrow.classList.remove('hidden'); // 顯示指示箭頭
             } else if (isAndroid) {
-                // Android 情境
                 if (deferredPrompt) {
-                    // 如果有抓到系統事件，直接觸發
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            deferredPrompt = null;
-                        }
+                        if (choiceResult.outcome === 'accepted') deferredPrompt = null;
                         installModal.classList.add('hidden');
                     });
                 } else {
-                    // 無法自動觸發，顯示教學
                     installContent.innerHTML = `
                         請點擊瀏覽器右上角的 <span class="font-bold text-neko-green">選單</span> (三個點點)<br><br>
                         選擇 <span class="font-bold text-neko-green">安裝應用程式</span> 或 <span class="font-bold text-neko-green">加入主畫面</span><br>
-                        就可以離線使用囉！
                     `;
                 }
             } else {
-                // 電腦或其他
                 if (deferredPrompt) {
                      deferredPrompt.prompt();
                      installModal.classList.add('hidden');
@@ -319,7 +311,7 @@
             installModal.classList.add('hidden');
         };
 
-        // --- Core Logic ---
+        // --- Core Logic (與之前相同) ---
         const micBtn = document.getElementById('mic-btn');
         const addBtn = document.getElementById('add-btn');
         const itemInput = document.getElementById('item-input');
@@ -480,7 +472,7 @@
         statsModal.addEventListener('click', (e) => { if (e.target === statsModal) toggleStatsModal(); });
         settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) toggleSettingsModal(); });
 
-        // --- Data Management Functions ---
+        // --- Data Management ---
         window.exportJSON = function() {
             const dataStr = JSON.stringify(expenses, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
