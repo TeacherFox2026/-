@@ -63,6 +63,13 @@
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* iOS 指示箭頭動畫 */
+        @keyframes bounce-down {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        .animate-bounce-down { animation: bounce-down 1.5s infinite; }
+
         /* 日期選擇器 */
         input[type="date"] { position: relative; }
         input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
@@ -94,7 +101,7 @@
         <div class="absolute bottom-[5%] left-[20%] text-neko-green/20 text-4xl rotate-[45deg] bg-paw" style="animation-delay: 0.8s; --r: 45deg;"><i class="fa-solid fa-paw"></i></div>
     </div>
 
-    <!-- 智慧安裝引導 Modal (修正版) -->
+    <!-- 智慧安裝引導 Modal -->
     <div id="install-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center fade-in backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border-4 border-neko-green-light flex flex-col items-center text-center">
             
@@ -202,7 +209,8 @@
     <!-- 底部控制區 -->
     <footer class="fixed bottom-0 left-0 w-full bg-white rounded-t-[30px] shadow-[0_-5px_30px_rgba(0,0,0,0.06)] p-5 z-20 pb-safe-area">
         <div id="status-text" class="text-center text-xs text-neko-orange mb-4 h-4 font-bold transition-all"></div>
-        <div class="flex items-center gap-2 mb-2">
+        
+        <div class="flex items-center gap-2 mb-1"> <!-- mb-2 改為 mb-1 讓出空間給下方文字 -->
             <div class="flex-1 bg-gray-50 rounded-2xl p-1 flex items-center border border-gray-200 shadow-inner transition-all focus-within:border-neko-green focus-within:ring-2 focus-within:ring-neko-green/20 relative">
                 <div class="relative w-10 h-full flex items-center justify-center border-r border-gray-200">
                     <i class="fa-regular fa-calendar text-gray-400 absolute pointer-events-none"></i>
@@ -214,6 +222,12 @@
             </div>
             <button id="add-btn" class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 hover:bg-neko-green hover:text-white transition-all flex items-center justify-center shadow-sm active:scale-90"><i class="fa-solid fa-check"></i></button>
         </div>
+
+        <!-- 版本資訊 (NEW) -->
+        <div class="text-right text-[10px] text-gray-300 font-medium mt-1 pr-1 select-none">
+            V1.01 <span class="mx-1">·</span> Made by fox 🦊
+        </div>
+
         <div class="absolute left-1/2 -translate-x-1/2 -top-10">
             <button id="mic-btn" class="w-20 h-20 rounded-full bg-neko-green text-white shadow-xl shadow-neko-green/40 flex items-center justify-center transition-transform active:scale-95 border-[6px] border-white group relative overflow-hidden">
                 <i class="fa-solid fa-paw text-3xl group-hover:scale-110 transition-transform relative z-10"></i>
@@ -236,13 +250,12 @@
         }
         initPWA();
 
-        // --- 智慧安裝引導邏輯 (修正版) ---
+        // --- 智慧安裝引導邏輯 ---
         let deferredPrompt;
         const installModal = document.getElementById('install-modal');
         const installContent = document.getElementById('install-content');
         const installTriggerBtn = document.getElementById('install-trigger-btn');
 
-        // 1. 偵測 App 模式
         function checkStandalone() {
             if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
                 if(installTriggerBtn) installTriggerBtn.style.display = 'none';
@@ -252,7 +265,6 @@
         checkStandalone();
         window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
 
-        // 2. 偵測 Android 安裝事件
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -260,14 +272,12 @@
 
         window.checkForInstall = function() {
             const ua = navigator.userAgent.toLowerCase();
-            // 新版 iPadOS 判斷: Macintosh 且支援觸控
             const isIOS = /iphone|ipad|ipod/.test(ua) || (navigator.platform === 'Macintosh' && navigator.maxTouchPoints > 1);
             const isAndroid = /android/.test(ua);
 
             installModal.classList.remove('hidden');
 
             if (isIOS) {
-                // iOS 情境 (不分 iPad/iPhone，統一用視覺引導)
                 installContent.innerHTML = `
                     <div class="mb-4 text-center">
                         <div class="inline-block animate-bounce-icon text-neko-green text-3xl mb-2">
@@ -311,7 +321,7 @@
             installModal.classList.add('hidden');
         };
 
-        // --- Core Logic (與之前相同) ---
+        // --- Core Logic ---
         const micBtn = document.getElementById('mic-btn');
         const addBtn = document.getElementById('add-btn');
         const itemInput = document.getElementById('item-input');
