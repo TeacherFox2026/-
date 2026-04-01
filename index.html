@@ -58,8 +58,18 @@
         .mic-active { animation: pulse-ring 1.5s infinite; background-color: #FF9F1C !important; border-color: #FF9F1C !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .slide-in { animation: slideIn 0.3s ease-out forwards; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 載入與新增時的動畫 (向上滑入) */
+        .slide-in-up { animation: slideInUp 0.3s ease-out forwards; }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 左右滑動切換月份動畫 */
+        .slide-in-next { animation: slideNext 0.3s ease-out forwards; }
+        @keyframes slideNext { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .slide-in-prev { animation: slidePrev 0.3s ease-out forwards; }
+        @keyframes slidePrev { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -78,7 +88,7 @@
         @keyframes float-paw { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-10px) rotate(var(--r)); } }
         .bg-paw { animation: float-paw 6s ease-in-out infinite; }
 
-        /* 分享按鈕跳動動畫 (取代原本的向下箭頭) */
+        /* 分享按鈕跳動動畫 */
         @keyframes bounce-icon {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
@@ -104,24 +114,11 @@
     <!-- 智慧安裝引導 Modal -->
     <div id="install-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center fade-in backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative border-4 border-neko-green-light flex flex-col items-center text-center">
-            
             <button onclick="dismissInstall()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50"><i class="fa-solid fa-times"></i></button>
-            
-            <!-- 大標題區塊 -->
-            <div class="w-16 h-16 bg-neko-green-light rounded-2xl flex items-center justify-center text-3xl text-neko-green mb-3 shadow-sm">
-                <i class="fa-solid fa-mobile-screen-button"></i>
-            </div>
-            
+            <div class="w-16 h-16 bg-neko-green-light rounded-2xl flex items-center justify-center text-3xl text-neko-green mb-3 shadow-sm"><i class="fa-solid fa-mobile-screen-button"></i></div>
             <h3 class="font-bold text-xl text-neko-dark mb-4">安裝貓咪記帳本</h3>
-            
-            <!-- 動態內容區 -->
-            <div id="install-content" class="text-sm text-gray-500 mb-6 leading-relaxed w-full">
-                <!-- Javascript 會填入內容 -->
-            </div>
-
-            <button onclick="dismissInstall()" class="w-full bg-neko-green text-white py-3 rounded-xl font-bold shadow-lg shadow-neko-green/30 active:scale-95 transition-transform">
-                我知道了喵！
-            </button>
+            <div id="install-content" class="text-sm text-gray-500 mb-6 leading-relaxed w-full"></div>
+            <button onclick="dismissInstall()" class="w-full bg-neko-green text-white py-3 rounded-xl font-bold shadow-lg shadow-neko-green/30 active:scale-95 transition-transform">我知道了喵！</button>
         </div>
     </div>
 
@@ -170,12 +167,8 @@
     <!-- Header -->
     <header class="pt-12 pb-2 px-6 bg-white sticky top-0 z-10 bg-opacity-90 backdrop-blur-sm">
         <div class="flex justify-between items-center mb-1">
-            <!-- 左側安裝按鈕 -->
             <button id="install-trigger-btn" onclick="checkForInstall()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-400 hover:text-neko-green hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95"><i class="fa-solid fa-download"></i></button>
-
             <h1 class="text-2xl font-bold text-neko-dark tracking-widest flex items-center justify-center relative"><i class="fa-solid fa-cat text-neko-green mr-2"></i>貓咪記帳本</h1>
-            
-            <!-- 右側功能區 -->
             <div class="flex gap-2">
                 <button onclick="toggleSettingsModal()" class="w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-neko-orange hover:bg-neko-bg transition-colors flex items-center justify-center active:scale-95"><i class="fa-solid fa-gear"></i></button>
                 <button onclick="toggleStatsModal()" class="w-10 h-10 rounded-full bg-neko-bg shadow-md border border-gray-100 text-neko-green hover:bg-neko-green hover:text-white transition-colors flex items-center justify-center active:scale-95"><i class="fa-solid fa-chart-simple"></i></button>
@@ -193,24 +186,27 @@
                 <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 active:bg-white/30 transition-colors"><i class="fa-solid fa-chevron-right text-sm"></i></button>
             </div>
             <div class="text-5xl font-bold tracking-wider flex justify-center items-baseline mt-1 drop-shadow-sm"><span class="text-2xl mr-1 opacity-80">$</span><span id="monthly-total">0</span></div>
-            <p class="text-xs opacity-70 mt-2">記得買罐罐喔！</p>
+            <p class="text-xs opacity-70 mt-2">左右滑動切換月份喵！</p> <!-- 提示文字稍微修改 -->
         </div>
     </section>
 
-    <!-- 列表區域 -->
+    <!-- 列表區域 (支援滑動手勢) -->
     <main class="flex-1 overflow-y-auto px-5 pb-36 no-scrollbar relative z-10" id="expense-list-container">
-        <div id="empty-state" class="text-center mt-20 hidden">
-            <div class="mb-4 text-6xl text-gray-300"><i class="fa-solid fa-box-open"></i></div>
-            <p class="text-gray-500 font-bold text-lg">這個月還沒有花費喵～<br>按下肉球按鈕開始記帳！</p>
+        <!-- 將狀態容器包起來一起做動畫 -->
+        <div id="animation-wrapper" class="w-full">
+            <div id="empty-state" class="text-center mt-20 hidden">
+                <div class="mb-4 text-6xl text-gray-300"><i class="fa-solid fa-box-open"></i></div>
+                <p class="text-gray-500 font-bold text-lg">這個月還沒有花費喵～<br>按下肉球按鈕開始記帳！</p>
+            </div>
+            <ul id="expense-list" class="space-y-3 mt-4 pb-10"></ul>
         </div>
-        <ul id="expense-list" class="space-y-3 mt-4 pb-10"></ul>
     </main>
 
     <!-- 底部控制區 -->
     <footer class="fixed bottom-0 left-0 w-full bg-white rounded-t-[30px] shadow-[0_-5px_30px_rgba(0,0,0,0.06)] p-5 z-20 pb-safe-area">
         <div id="status-text" class="text-center text-xs text-neko-orange mb-4 h-4 font-bold transition-all"></div>
         
-        <div class="flex items-center gap-2 mb-1"> <!-- mb-2 改為 mb-1 讓出空間給下方文字 -->
+        <div class="flex items-center gap-2 mb-1">
             <div class="flex-1 bg-gray-50 rounded-2xl p-1 flex items-center border border-gray-200 shadow-inner transition-all focus-within:border-neko-green focus-within:ring-2 focus-within:ring-neko-green/20 relative">
                 <div class="relative w-10 h-full flex items-center justify-center border-r border-gray-200">
                     <i class="fa-regular fa-calendar text-gray-400 absolute pointer-events-none"></i>
@@ -223,7 +219,7 @@
             <button id="add-btn" class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 hover:bg-neko-green hover:text-white transition-all flex items-center justify-center shadow-sm active:scale-90"><i class="fa-solid fa-check"></i></button>
         </div>
 
-        <!-- 版本資訊 (NEW) -->
+        <!-- 版本資訊 -->
         <div class="text-right text-[10px] text-gray-300 font-medium mt-1 pr-1 select-none">
             V1.01 <span class="mx-1">·</span> Made by fox 🦊
         </div>
@@ -264,11 +260,7 @@
         
         checkStandalone();
         window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
 
         window.checkForInstall = function() {
             const ua = navigator.userAgent.toLowerCase();
@@ -280,15 +272,10 @@
             if (isIOS) {
                 installContent.innerHTML = `
                     <div class="mb-4 text-center">
-                        <div class="inline-block animate-bounce-icon text-neko-green text-3xl mb-2">
-                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
-                        </div>
+                        <div class="inline-block animate-bounce-icon text-neko-green text-3xl mb-2"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
                         <p class="font-bold text-gray-700">請尋找這個「分享按鈕」</p>
                     </div>
-                    <p class="mb-4">
-                        點擊後，往下滑選擇<br>
-                        <span class="font-bold text-neko-green text-lg">「加入主畫面」</span>
-                    </p>
+                    <p class="mb-4">點擊後，往下滑選擇<br><span class="font-bold text-neko-green text-lg">「加入主畫面」</span></p>
                     <p class="text-xs text-gray-400 border-t border-gray-100 pt-2 mt-2">
                         <i class="fa-solid fa-mobile-screen mr-1"></i>iPhone：通常在螢幕下方<br>
                         <i class="fa-solid fa-tablet-screen-button mr-1"></i>iPad：通常在螢幕右上方
@@ -302,24 +289,15 @@
                         installModal.classList.add('hidden');
                     });
                 } else {
-                    installContent.innerHTML = `
-                        請點擊瀏覽器右上角的 <span class="font-bold text-neko-green">選單</span> (三個點點)<br><br>
-                        選擇 <span class="font-bold text-neko-green">安裝應用程式</span> 或 <span class="font-bold text-neko-green">加入主畫面</span><br>
-                    `;
+                    installContent.innerHTML = `請點擊瀏覽器右上角的 <span class="font-bold text-neko-green">選單</span> (三個點點)<br><br>選擇 <span class="font-bold text-neko-green">安裝應用程式</span> 或 <span class="font-bold text-neko-green">加入主畫面</span><br>`;
                 }
             } else {
-                if (deferredPrompt) {
-                     deferredPrompt.prompt();
-                     installModal.classList.add('hidden');
-                } else {
-                    installContent.innerHTML = `請使用 Chrome 或 Edge 瀏覽器的選單功能<br>選擇「安裝貓咪記帳本」即可！`;
-                }
+                if (deferredPrompt) { deferredPrompt.prompt(); installModal.classList.add('hidden'); } 
+                else { installContent.innerHTML = `請使用 Chrome 或 Edge 瀏覽器的選單功能<br>選擇「安裝貓咪記帳本」即可！`; }
             }
         };
 
-        window.dismissInstall = function() {
-            installModal.classList.add('hidden');
-        };
+        window.dismissInstall = function() { installModal.classList.add('hidden'); };
 
         // --- Core Logic ---
         const micBtn = document.getElementById('mic-btn');
@@ -328,12 +306,11 @@
         const priceInput = document.getElementById('price-input');
         const dateInput = document.getElementById('date-input');
         const expenseList = document.getElementById('expense-list');
+        const emptyState = document.getElementById('empty-state');
+        const animationWrapper = document.getElementById('animation-wrapper'); // 動畫容器
         const monthlyTotalEl = document.getElementById('monthly-total');
         const currentMonthDisplay = document.getElementById('current-month-display');
         const statusText = document.getElementById('status-text');
-        const emptyState = document.getElementById('empty-state');
-        const statsModal = document.getElementById('stats-modal');
-        const settingsModal = document.getElementById('settings-modal');
 
         let expenses = [];
         let isListening = false;
@@ -344,7 +321,7 @@
             loadData();
             setTodayDateInput();
             initSearchDateInputs();
-            renderView();
+            renderView('up'); // 初始載入向上滑入
         });
 
         function setTodayDateInput() { dateInput.value = new Date().toISOString().split('T')[0]; }
@@ -355,13 +332,20 @@
         }
 
         function loadData() { const stored = localStorage.getItem('neko_expenses'); if (stored) expenses = JSON.parse(stored); }
-        function saveData() { localStorage.setItem('neko_expenses', JSON.stringify(expenses)); renderView(); }
-        function changeMonth(offset) { currentViewDate.setMonth(currentViewDate.getMonth() + offset); renderView(); }
+        function saveData(animationType = 'up') { localStorage.setItem('neko_expenses', JSON.stringify(expenses)); renderView(animationType); }
+        
+        function changeMonth(offset) { 
+            currentViewDate.setMonth(currentViewDate.getMonth() + offset); 
+            // 往後(下個月)滑向左 slide-in-next，往前(上個月)滑向右 slide-in-prev
+            renderView(offset > 0 ? 'next' : 'prev'); 
+        }
 
-        function renderView() {
+        // renderView 新增 animation 參數來決定動畫方向
+        function renderView(animationType = 'up') {
             const year = currentViewDate.getFullYear();
             const month = currentViewDate.getMonth() + 1;
             currentMonthDisplay.textContent = `${year}年 ${month}月`;
+            
             const filteredExpenses = expenses.filter(exp => { const d = new Date(exp.dateStr); return d.getFullYear() === year && d.getMonth() === (month - 1); });
             
             filteredExpenses.sort((a, b) => {
@@ -372,6 +356,11 @@
 
             const total = filteredExpenses.reduce((sum, item) => sum + item.price, 0);
             monthlyTotalEl.textContent = total.toLocaleString();
+            
+            // 清除現有動畫 class，強制重繪以重新觸發動畫
+            animationWrapper.classList.remove('slide-in-up', 'slide-in-next', 'slide-in-prev');
+            void animationWrapper.offsetWidth; // 觸發 reflow
+            
             expenseList.innerHTML = '';
 
             if (filteredExpenses.length === 0) {
@@ -380,7 +369,8 @@
                 emptyState.classList.add('hidden');
                 filteredExpenses.forEach(exp => {
                     const li = document.createElement('li');
-                    li.className = 'bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between slide-in border border-gray-100 hover:border-neko-green/30 transition-colors relative overflow-hidden group';
+                    // 移除獨立的 slide-in，改由父容器統一做過場動畫
+                    li.className = 'bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between border border-gray-100 hover:border-neko-green/30 transition-colors relative overflow-hidden group';
                     const dayStr = `${new Date(exp.dateStr).getMonth()+1}/${new Date(exp.dateStr).getDate()}`;
                     li.innerHTML = `
                         <div class="absolute -right-2 -bottom-2 text-neko-green/5 text-4xl transform rotate-12 pointer-events-none group-hover:scale-110 transition-transform"><i class="fa-solid fa-paw"></i></div>
@@ -402,8 +392,44 @@
                     expenseList.appendChild(li);
                 });
             }
+
+            // 套用新的動畫
+            if(animationType === 'next') animationWrapper.classList.add('slide-in-next');
+            else if(animationType === 'prev') animationWrapper.classList.add('slide-in-prev');
+            else animationWrapper.classList.add('slide-in-up');
         }
 
+        // --- 滑動手勢邏輯 (Swipe Detection) ---
+        const mainContainer = document.getElementById('expense-list-container');
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const SWIPE_THRESHOLD = 50; // 觸發滑動的最小距離
+
+        mainContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, {passive: true});
+
+        mainContainer.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            // 判斷是否為水平滑動 (X的位移大於Y的位移，防止把上下滾動誤判為左右滑動)
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
+                if (deltaX > 0) {
+                    // 向右滑：上個月
+                    changeMonth(-1);
+                } else {
+                    // 向左滑：下個月
+                    changeMonth(1);
+                }
+            }
+        }, {passive: true});
+
+        // --- 輸入邏輯 ---
         addBtn.addEventListener('click', addExpense);
         function addExpense() {
             const item = itemInput.value.trim();
@@ -420,7 +446,7 @@
                 expenses.push({ id: Date.now(), item, price: parseInt(price), dateStr, timestamp: new Date().toISOString() });
                 const selectedDate = new Date(dateStr); currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
             }
-            itemInput.value = ''; priceInput.value = ''; setTodayDateInput(); saveData();
+            itemInput.value = ''; priceInput.value = ''; setTodayDateInput(); saveData('up'); // 新增資料固定用向上浮出
         }
 
         function resetInputUI() {
@@ -440,7 +466,7 @@
             }
         };
 
-        window.deleteExpense = function(id) { if(confirm('要刪除這筆紀錄喵？')) { expenses = expenses.filter(e => e.id !== id); saveData(); } };
+        window.deleteExpense = function(id) { if(confirm('要刪除這筆紀錄喵？')) { expenses = expenses.filter(e => e.id !== id); saveData('up'); } };
 
         // --- Speech Recognition ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -465,6 +491,8 @@
         }
 
         // --- Stats & Settings Modals ---
+        const statsModal = document.getElementById('stats-modal');
+        const settingsModal = document.getElementById('settings-modal');
         window.toggleStatsModal = function() { statsModal.classList.toggle('hidden'); document.getElementById('range-result-area').classList.add('hidden'); }
         window.toggleSettingsModal = function() { settingsModal.classList.toggle('hidden'); }
 
@@ -501,7 +529,7 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     if (Array.isArray(importedData) && (importedData.length === 0 || (importedData[0].hasOwnProperty('item') && importedData[0].hasOwnProperty('price')))) {
-                        if(confirm(`確定要匯入 ${importedData.length} 筆資料嗎？\n(目前的資料將會被覆蓋)`)) { expenses = importedData; saveData(); alert('匯入成功喵！'); toggleSettingsModal(); }
+                        if(confirm(`確定要匯入 ${importedData.length} 筆資料嗎？\n(目前的資料將會被覆蓋)`)) { expenses = importedData; saveData('up'); alert('匯入成功喵！'); toggleSettingsModal(); }
                     } else { alert('檔案格式錯誤，這不是貓咪記帳本的備份檔喔！'); }
                 } catch (err) { alert('讀取檔案失敗：' + err); }
                 input.value = ''; 
@@ -529,3 +557,4 @@
     </script>
 </body>
 </html>
+
