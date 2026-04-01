@@ -186,7 +186,7 @@
                 <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 active:bg-white/30 transition-colors"><i class="fa-solid fa-chevron-right text-sm"></i></button>
             </div>
             <div class="text-5xl font-bold tracking-wider flex justify-center items-baseline mt-1 drop-shadow-sm"><span class="text-2xl mr-1 opacity-80">$</span><span id="monthly-total">0</span></div>
-            <p class="text-xs opacity-70 mt-2">左右滑動切換月份喵！</p> <!-- 提示文字稍微修改 -->
+            <p class="text-xs opacity-70 mt-2">左右滑動切換月份喵！</p>
         </div>
     </section>
 
@@ -219,9 +219,9 @@
             <button id="add-btn" class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 hover:bg-neko-green hover:text-white transition-all flex items-center justify-center shadow-sm active:scale-90"><i class="fa-solid fa-check"></i></button>
         </div>
 
-        <!-- 版本資訊 -->
+        <!-- 作者資訊 (已修改為 TeacherFox) -->
         <div class="text-right text-[10px] text-gray-300 font-medium mt-1 pr-1 select-none">
-            V1.01 <span class="mx-1">·</span> Made by fox 🦊
+            Made by TeacherFox 🦊
         </div>
 
         <div class="absolute left-1/2 -translate-x-1/2 -top-10">
@@ -307,7 +307,7 @@
         const dateInput = document.getElementById('date-input');
         const expenseList = document.getElementById('expense-list');
         const emptyState = document.getElementById('empty-state');
-        const animationWrapper = document.getElementById('animation-wrapper'); // 動畫容器
+        const animationWrapper = document.getElementById('animation-wrapper');
         const monthlyTotalEl = document.getElementById('monthly-total');
         const currentMonthDisplay = document.getElementById('current-month-display');
         const statusText = document.getElementById('status-text');
@@ -321,7 +321,7 @@
             loadData();
             setTodayDateInput();
             initSearchDateInputs();
-            renderView('up'); // 初始載入向上滑入
+            renderView('up');
         });
 
         function setTodayDateInput() { dateInput.value = new Date().toISOString().split('T')[0]; }
@@ -336,11 +336,9 @@
         
         function changeMonth(offset) { 
             currentViewDate.setMonth(currentViewDate.getMonth() + offset); 
-            // 往後(下個月)滑向左 slide-in-next，往前(上個月)滑向右 slide-in-prev
             renderView(offset > 0 ? 'next' : 'prev'); 
         }
 
-        // renderView 新增 animation 參數來決定動畫方向
         function renderView(animationType = 'up') {
             const year = currentViewDate.getFullYear();
             const month = currentViewDate.getMonth() + 1;
@@ -357,9 +355,8 @@
             const total = filteredExpenses.reduce((sum, item) => sum + item.price, 0);
             monthlyTotalEl.textContent = total.toLocaleString();
             
-            // 清除現有動畫 class，強制重繪以重新觸發動畫
             animationWrapper.classList.remove('slide-in-up', 'slide-in-next', 'slide-in-prev');
-            void animationWrapper.offsetWidth; // 觸發 reflow
+            void animationWrapper.offsetWidth; 
             
             expenseList.innerHTML = '';
 
@@ -369,7 +366,6 @@
                 emptyState.classList.add('hidden');
                 filteredExpenses.forEach(exp => {
                     const li = document.createElement('li');
-                    // 移除獨立的 slide-in，改由父容器統一做過場動畫
                     li.className = 'bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between border border-gray-100 hover:border-neko-green/30 transition-colors relative overflow-hidden group';
                     const dayStr = `${new Date(exp.dateStr).getMonth()+1}/${new Date(exp.dateStr).getDate()}`;
                     li.innerHTML = `
@@ -393,17 +389,16 @@
                 });
             }
 
-            // 套用新的動畫
             if(animationType === 'next') animationWrapper.classList.add('slide-in-next');
             else if(animationType === 'prev') animationWrapper.classList.add('slide-in-prev');
             else animationWrapper.classList.add('slide-in-up');
         }
 
-        // --- 滑動手勢邏輯 (Swipe Detection) ---
+        // --- 滑動手勢邏輯 ---
         const mainContainer = document.getElementById('expense-list-container');
         let touchStartX = 0;
         let touchStartY = 0;
-        const SWIPE_THRESHOLD = 50; // 觸發滑動的最小距離
+        const SWIPE_THRESHOLD = 50; 
 
         mainContainer.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
@@ -413,19 +408,12 @@
         mainContainer.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
-            
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
             
-            // 判斷是否為水平滑動 (X的位移大於Y的位移，防止把上下滾動誤判為左右滑動)
             if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
-                if (deltaX > 0) {
-                    // 向右滑：上個月
-                    changeMonth(-1);
-                } else {
-                    // 向左滑：下個月
-                    changeMonth(1);
-                }
+                if (deltaX > 0) changeMonth(-1);
+                else changeMonth(1);
             }
         }, {passive: true});
 
@@ -446,7 +434,7 @@
                 expenses.push({ id: Date.now(), item, price: parseInt(price), dateStr, timestamp: new Date().toISOString() });
                 const selectedDate = new Date(dateStr); currentViewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
             }
-            itemInput.value = ''; priceInput.value = ''; setTodayDateInput(); saveData('up'); // 新增資料固定用向上浮出
+            itemInput.value = ''; priceInput.value = ''; setTodayDateInput(); saveData('up');
         }
 
         function resetInputUI() {
